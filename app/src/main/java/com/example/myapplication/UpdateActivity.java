@@ -1,7 +1,6 @@
 package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +10,7 @@ import android.widget.Toast;
 
 public class UpdateActivity extends AppCompatActivity {
     String name,phone_number,id;
+    String newId;
     String updatedName, updatedPhone;
     EditText name_edt,phone_number_edt;
     Button button;
@@ -28,12 +28,14 @@ public class UpdateActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Retrieve the updated values here
-                updatedName = name_edt.getText().toString();
-                updatedPhone = phone_number_edt.getText().toString();
 
                 DatabaseHelper databaseHelper=new DatabaseHelper(getApplicationContext());
+                updatedName = name_edt.getText().toString();
+                updatedPhone = phone_number_edt.getText().toString();
+                newId = String.valueOf(databaseHelper.getIdFromName(name));
+                Log.d("New ID:", newId);
                 Log.d("Data from update: " , "Name: " + name +"  " + "Phone_NO.: "+ phone_number);
-                databaseHelper.update("2", updatedName, updatedPhone);
+                databaseHelper.update(newId, updatedName, updatedPhone);
                 finish();
             }
         });

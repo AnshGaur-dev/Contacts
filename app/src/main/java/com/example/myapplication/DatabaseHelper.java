@@ -86,23 +86,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public int getIdFromName(String name) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int id = -1; // Default value if name is not found
+
+        Cursor cursor = db.query(TABLE_NAME, new String[]{ID}, NAME + " = ?", new String[]{name}, null, null, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int idColumnIndex = cursor.getColumnIndex(ID);
+                if (idColumnIndex != -1) {
+                    id = cursor.getInt(idColumnIndex);
+                } else {
+                    Log.e("DatabaseHelper", "ID column not found in cursor.");
+                }
+            } else {
+                Log.e("DatabaseHelper", "No data found for name: " + name);
+            }
+            cursor.close();
+        } else {
+            Log.e("DatabaseHelper", "Cursor is null.");
+        }
+
+        db.close();
+
+        return id;
+    }
 
 
-    //    public void update(String row_id, String name,String  phone_number){
-//
-//        ContentValues cv=new ContentValues();
-//        cv.put(NAME, String.valueOf(name));
-//        cv.put(PHONENUMBER, String.valueOf(phone_number));
-////        db.update(TABLE_NAME, cv,"_id", new String[]{row_id});
-//        long result=db.update(TABLE_NAME,cv,"_id",new String[]{row_id});
-//        db.close();
-//        if (result== -1){
-//            Toast.makeText(context, "Fail to  Update", Toast.LENGTH_SHORT).show();
-//        }
-//        else {
-//            Toast.makeText(context, "Sucessfully Update", Toast.LENGTH_SHORT).show();
-//        }
-//    }
     //yeah StructArraylist k bina ho sakta tah apan 3 array list bana lete har type k liye par yeah better approach h
     public ArrayList<StructArraylist> fetchContact(){
        // SQLiteDatabase sqLiteDatabase=this.getReadableDatabase();

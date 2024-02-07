@@ -32,7 +32,7 @@ public class UpdateActivity extends AppCompatActivity {
                 DatabaseHelper databaseHelper=new DatabaseHelper(getApplicationContext());
                 updatedName = name_edt.getText().toString();
                 updatedPhone = phone_number_edt.getText().toString();
-                newId = String.valueOf(databaseHelper.getIdFromName(name));
+                newId = String.valueOf(databaseHelper.getIdFromName(phone_number));
                 Log.d("New ID:", newId);
                 Log.d("Data from update: " , "Name: " + name +"  " + "Phone_NO.: "+ phone_number);
                 databaseHelper.update(newId, updatedName, updatedPhone);

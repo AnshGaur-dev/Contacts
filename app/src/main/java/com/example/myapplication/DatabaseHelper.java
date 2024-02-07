@@ -90,7 +90,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         int id = -1; // Default value if name is not found
 
-        Cursor cursor = db.query(TABLE_NAME, new String[]{ID}, NAME + " = ?", new String[]{name}, null, null, null);
+        Cursor cursor = db.query(TABLE_NAME, new String[]{ID}, PHONENUMBER + " = ?", new String[]{name}, null, null, null);
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {

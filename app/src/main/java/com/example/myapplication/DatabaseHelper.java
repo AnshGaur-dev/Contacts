@@ -5,12 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+
+import java.sql.Array;
 import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private final Context context;
+    private Context context;
     private static final String DATABASE_NAME="ContactDB";
     private static final int DATABASE_VERSION=1;
     private static final String TABLE_NAME ="CONTACTS";
@@ -19,9 +23,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String NAME="name";
 
 
-     DatabaseHelper( Context context) {
+    public DatabaseHelper( Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context=context;
+
     }
 
     @Override
@@ -32,6 +36,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + NAME + " TEXT, "
                 + PHONENUMBER + " TEXT UNIQUE"
                 + ")");
+
+
 //        sqLiteDatabase=this.getReadableDatabase();
 //        sqLiteDatabase.close();//use to close the database
     }
@@ -46,20 +52,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values=new ContentValues();//direct nhi dalte values apan iske through dalte h
         values.put(PHONENUMBER,phone_no);
         values.put(NAME,name);
+
         db.insert(TABLE_NAME,null,values);
     }
-     void update(String row_id, String name, String phone_number){
-        SQLiteDatabase db=this.getWritableDatabase();
+    public void update(String row_id, String name,String  phone_number){
+        SQLiteDatabase sqLiteDatabase=getWritableDatabase();
         ContentValues cv=new ContentValues();
-        cv.put(NAME, name);
-        cv.put(PHONENUMBER, phone_number);
-        long result=db.update(TABLE_NAME,cv,"_id=?",new String[]{row_id});
+        cv.put(NAME, String.valueOf(name));
+        cv.put(PHONENUMBER, String.valueOf(phone_number));
+        long result=sqLiteDatabase.update(TABLE_NAME,cv,"_id",new String[]{row_id});
+        sqLiteDatabase.close();
         if (result==-1){
             Toast.makeText(context, "Fail to  Update", Toast.LENGTH_SHORT).show();
         }
         else {
             Toast.makeText(context, "Sucessfully Update", Toast.LENGTH_SHORT).show();
-            Log.d("Sucesss mili","HO GAYA ");
         }
     }
     //yeah StructArraylist k bina ho sakta tah apan 3 array list bana lete har type k liye par yeah better approach h
@@ -76,7 +83,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             arraylist.phone_number=cursor.getString(2);
             structArraylists.add(arraylist);
         }
-        cursor.close();
         return  structArraylists;
     }
 }

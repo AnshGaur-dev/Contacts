@@ -1,7 +1,7 @@
 package com.example.myapplication;
 
 public class StructArraylist {
-    int id;
-    String name;
-    String phone_number;
+    public int id;
+    public String name;
+    public String phone_number;
 }

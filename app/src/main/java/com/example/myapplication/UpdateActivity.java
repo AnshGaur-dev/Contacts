@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,21 +11,29 @@ import android.widget.Toast;
 
 public class UpdateActivity extends AppCompatActivity {
     String name,phone_number,id;
+    String updatedName, updatedPhone;
     EditText name_edt,phone_number_edt;
     Button button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
+
         name_edt=findViewById(R.id.Name_EdtUpdate);
         phone_number_edt=findViewById(R.id.Phone_numberEdtUpdate);
         button=findViewById(R.id.update_btn);
         GetandSetIntentData();
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseHelper databaseHelper=new DatabaseHelper(UpdateActivity.this);
-                databaseHelper.update(id,name,phone_number);
+                // Retrieve the updated values here
+                updatedName = name_edt.getText().toString();
+                updatedPhone = phone_number_edt.getText().toString();
+
+                DatabaseHelper databaseHelper=new DatabaseHelper(getApplicationContext());
+                Log.d("Data from update: " , "Name: " + name +"  " + "Phone_NO.: "+ phone_number);
+                databaseHelper.update("2", updatedName, updatedPhone);
                 finish();
             }
         });

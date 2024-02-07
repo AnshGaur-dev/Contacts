@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -25,7 +26,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public DatabaseHelper( Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-
+        this.context = context;
     }
 
     @Override
@@ -47,33 +48,67 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
+    SQLiteDatabase db= this.getWritableDatabase();
     public void addData(String name,String phone_no){
-        SQLiteDatabase db= this.getWritableDatabase();
+
         ContentValues values=new ContentValues();//direct nhi dalte values apan iske through dalte h
         values.put(PHONENUMBER,phone_no);
         values.put(NAME,name);
 
         db.insert(TABLE_NAME,null,values);
     }
-    public void update(String row_id, String name,String  phone_number){
-        SQLiteDatabase sqLiteDatabase=getWritableDatabase();
-        ContentValues cv=new ContentValues();
-        cv.put(NAME, String.valueOf(name));
-        cv.put(PHONENUMBER, String.valueOf(phone_number));
-        long result=sqLiteDatabase.update(TABLE_NAME,cv,"_id",new String[]{row_id});
-        sqLiteDatabase.close();
-        if (result==-1){
-            Toast.makeText(context, "Fail to  Update", Toast.LENGTH_SHORT).show();
+    public void update(String row_id, String name, String phone_number) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        Log.d("Data: " , "Name: " + name +"  " + "Phone_NO.: "+ phone_number);
+        cv.put(NAME, name);
+        cv.put(PHONENUMBER, phone_number);
+
+        int result = db.update(TABLE_NAME, cv, ID + " = ?", new String[]{row_id});
+
+        Log.d("Database Update", "SQL Query: " + db.compileStatement("UPDATE " + TABLE_NAME +
+                " SET " + NAME + "='" + name + "', " + PHONENUMBER + "='" + phone_number + "' WHERE " + ID + "='" + row_id + "'").toString());
+
+        Log.d("Database Update", "Rows updated: " + result);
+
+        if (result == 1) {
+            Log.d("Database Update", "Row with ID " + row_id + " updated successfully.");
+            Toast.makeText(context, "Successfully updated", Toast.LENGTH_SHORT).show();
+        } else if (result == 0) {
+            Log.d("Database Update", "No rows were updated for ID " + row_id);
+            Toast.makeText(context, "No rows were updated", Toast.LENGTH_SHORT).show();
+        } else {
+            Log.d("Database Update", "Unexpected update result: " + result);
+            Toast.makeText(context, "Unexpected update result: " + result, Toast.LENGTH_SHORT).show();
         }
-        else {
-            Toast.makeText(context, "Sucessfully Update", Toast.LENGTH_SHORT).show();
-        }
+
+        db.close();
     }
+
+
+
+    //    public void update(String row_id, String name,String  phone_number){
+//
+//        ContentValues cv=new ContentValues();
+//        cv.put(NAME, String.valueOf(name));
+//        cv.put(PHONENUMBER, String.valueOf(phone_number));
+////        db.update(TABLE_NAME, cv,"_id", new String[]{row_id});
+//        long result=db.update(TABLE_NAME,cv,"_id",new String[]{row_id});
+//        db.close();
+//        if (result== -1){
+//            Toast.makeText(context, "Fail to  Update", Toast.LENGTH_SHORT).show();
+//        }
+//        else {
+//            Toast.makeText(context, "Sucessfully Update", Toast.LENGTH_SHORT).show();
+//        }
+//    }
     //yeah StructArraylist k bina ho sakta tah apan 3 array list bana lete har type k liye par yeah better approach h
     public ArrayList<StructArraylist> fetchContact(){
-        SQLiteDatabase sqLiteDatabase=this.getReadableDatabase();
+       // SQLiteDatabase sqLiteDatabase=this.getReadableDatabase();
+        db= this.getReadableDatabase();
         // .rawQuery cursor return karta h
-        Cursor cursor=sqLiteDatabase.rawQuery(" SELECT * FROM "+ TABLE_NAME,null);
+        Cursor cursor=db.rawQuery(" SELECT * FROM "+ TABLE_NAME,null);
         //aab cursor mil gaya h toh while loop use hoga jisse hum table k end tak ka data read kar paye
         ArrayList<StructArraylist> structArraylists=new ArrayList<>();
         while (cursor.moveToNext()){
